@@ -3,12 +3,13 @@ using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace DataAccess.Concrete.InMemory
 {
     public class InMemoryProductDal : IProductDal
     {
-        private List<Product> _products;
+        private readonly List<Product> _products;
 
         public InMemoryProductDal()
         {
@@ -53,20 +54,19 @@ namespace DataAccess.Concrete.InMemory
             {
                 throw new ArgumentException("Provided Product is not found", nameof(product));
             }
-            _products = _products.Where(p => p.ProductId != product.ProductId).ToList();
+            _products.Remove(productToDelete);
             Console.WriteLine("Product deleted successfully");
         }
 
-        public List<Product> GetAll()
+        public Product Get(Expression<Func<Product, bool>> filter)
         {
-            return _products;
+            return _products.SingleOrDefault(filter.Compile());
         }
 
-        public List<Product> GetAllByCategory(int categoryId)
+        public List<Product> GetAll(Expression<Func<Product, bool>> predicate)
         {
-            return _products.Where(p => p.CategoryId == categoryId).ToList();
+            return predicate is null ? _products : _products.Where(predicate.Compile()).ToList();
         }
-
         public void Update(Product product)
         {
             var productToUpdate = _products.Single(p => p.ProductId == product.ProductId);

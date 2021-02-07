@@ -1,9 +1,7 @@
 ﻿using Business.Abstract;
 using DataAccess.Abstract;
 using Entities.Concrete;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Business.Concrete
 {
@@ -15,11 +13,19 @@ namespace Business.Concrete
         {
             _productDal = productDal;
         }
-
         public List<Product> GetAll()
         {
-            //business logic controls then execute below command
-            return _productDal?.GetAll();
+            return _productDal.GetAll();
+        }
+
+        public List<Product> GetProductsByCategoryId(int categoryId)
+        {
+            return _productDal.GetAll(p => p.CategoryId == categoryId);
+        }
+
+        public List<Product> GetProductsByMinAndMaxPrice(decimal minPrice, decimal maxPrice)
+        {
+            return _productDal.GetAll(p => p.UnitPrice >= minPrice && p.UnitPrice <= maxPrice);
         }
     }
 }

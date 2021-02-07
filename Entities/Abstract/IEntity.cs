@@ -5,7 +5,7 @@ using System.Text;
 namespace Entities.Abstract
 {
     //specifies db entity objects
-    interface IEntity
+    public interface IEntity
     {
     }
 }
