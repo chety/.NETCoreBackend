@@ -1,5 +1,6 @@
 ﻿using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,12 @@ namespace DataAccess.Concrete.InMemory
         {
             return predicate is null ? _products : _products.Where(predicate.Compile()).ToList();
         }
+
+        public List<ProductDetailDto> GetProductDetails()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Update(Product product)
         {
             var productToUpdate = _products.Single(p => p.ProductId == product.ProductId);

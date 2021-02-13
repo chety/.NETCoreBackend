@@ -18,7 +18,7 @@ namespace DataAccess.Concrete.EntityFramework
         //DbSet Connects database tables with our entity classes
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
-
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Order> Orders { get; set; }
     }
 }
