@@ -16,11 +16,20 @@ namespace ConsoleUI
         private static void ProductTest()
         {
             var productManager = new ProductManager(new EfProductDal());
-            foreach (var  productDetail in productManager.GetProductDetails())
+            var result = productManager.GetProductDetails();
+            if (result.Success)
             {
-                Console.WriteLine($"Name: {productDetail.ProductName} ---  Category: {productDetail.CategoryName}");
+
+                foreach (var productDetail in result.Data)
+                {
+                    Console.WriteLine($"Name: {productDetail.ProductName} ---  Category: {productDetail.CategoryName}");
+                }
             }
-            
+            else
+            {
+                Console.WriteLine(result.Message);
+            }
+
         }
 
         private static void CategoryTest()
