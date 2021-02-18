@@ -1,13 +1,6 @@
-﻿using Business.Abstract;
-using Business.Concrete;
-using DataAccess.Concrete.EntityFramework;
+using Business.Abstract;
 using Entities.Concrete;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -22,37 +15,31 @@ namespace WebAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet("getall")]
+        //[HttpGet("getall")] // -> https://localhost:44332/api/products/getall
+
+        [HttpGet] // -> https://localhost:44332/api/products
         public IActionResult Get()
         {
             var result = _productService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
             return BadRequest(result);
         }
 
-        [HttpGet("getbyid")]
+        //[HttpGet("getbyid")] // -> https://localhost:44332/api/products/getbyid?id=78
+
+        [HttpGet("{id}")] //-> https://localhost:44332/api/products/78
         public IActionResult Get(int id)
         {
             var result = _productService.GetById(id);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
             return NotFound(result);
         }
 
-        [HttpPost]
-        [HttpGet("add")]
+        [HttpPost("add")]
         public IActionResult Add(Product product)
         {
             var result = _productService.AddProduct(product);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+            if (result.Success) return Ok(result);
             return BadRequest(result);
         }
     }
