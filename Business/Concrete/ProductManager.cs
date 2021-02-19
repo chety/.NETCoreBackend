@@ -1,12 +1,13 @@
-using System;
-using System.Collections.Generic;
 using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using System;
+using System.Collections.Generic;
 
 namespace Business.Concrete
 {
@@ -19,9 +20,10 @@ namespace Business.Concrete
             _productDal = productDal;
         }
 
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult AddProduct(Product product)
         {
-            ValidationTool.Validate(new ProductValidator(), product);
+            //ValidationTool.Validate(new ProductValidator(), product);
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
         }
@@ -45,7 +47,11 @@ namespace Business.Concrete
         public IDataResult<List<ProductDetailDto>> GetProductDetails()
         {
             //fake business logic
-            if (DateTime.Now.Hour == 15) return new ErrorDataResult<List<ProductDetailDto>>(Messages.MaintenanceTime);
+            if (DateTime.Now.Hour == 15)
+            {
+                return new ErrorDataResult<List<ProductDetailDto>>(Messages.MaintenanceTime);
+            }
+
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails(),
                 Messages.ProductsListed);
         }
