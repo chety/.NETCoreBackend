@@ -11,5 +11,8 @@ namespace Business.Constants
         public const string MaintenanceTime = "System is in maintenance now...";        
         public const string ProductNameInvalid = "Invalid product name";
         public const string ProductAdded = "Product Added Successfully";
+        public static string ProductCountOfCategoryExceeded = "Maximum number of a category exceeded";
+
+        public static string ProductNameAlreadyExist = "Product with this name is already exists.";
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Business.ValidationRules.FluentValidation
+namespace Core.CrossCuttingConcerns.Validation
 {
     //Another implementation
     //public class ValidationTool<TEntity, TValidator> where TValidator : AbstractValidator<TEntity>, new()
