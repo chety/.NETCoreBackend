@@ -1,7 +1,8 @@
-using Business.Abstract;
+﻿using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -16,10 +17,12 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         private readonly IProductDal _productDal;
+        private readonly ICategoryService _categoryService;
 
-        public ProductManager(IProductDal productDal)
+        public ProductManager(IProductDal productDal, ICategoryService categoryService)
         {
             _productDal = productDal;
+            _categoryService = categoryService;
         }
 
         [ValidationAspect(typeof(ProductValidator))]
@@ -28,13 +31,12 @@ namespace Business.Concrete
             //instead of below line, we use ValidationAspect
             //ValidationTool.Validate(new ProductValidator(), product);
 
-            var checkResult = CheckIfProductCountOfCategoryCorrect(product.CategoryId);
-            if (!checkResult.Success)
-            {
-                return checkResult;
-            }
-            checkResult = CheckIfProductWithSameNameExists(product.ProductName);
-            if (!checkResult.Success)
+            //mevcut kategori sayısı 15 i geçerse ürün ekleme
+            IResult checkResult = BusinessRules.Run(
+                CheckIfProductCountOfCategoryCorrect(product.CategoryId),
+                CheckIfProductWithSameNameExists(product.ProductName),
+                CheckIfCategoryCountExceeded());
+            if (checkResult != null)
             {
                 return checkResult;
             }
@@ -102,5 +104,17 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
+
+        private IResult CheckIfCategoryCountExceeded()
+        {
+            var result = _categoryService.GetAll();
+            if (result.Data.Count > 15)
+            {
+                return new ErrorResult(Messages.CategoryCountExceeded);
+            }
+            return new SuccessResult();
+
+        }
     }
 }
+

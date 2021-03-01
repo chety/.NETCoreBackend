@@ -14,5 +14,6 @@ namespace Business.Constants
         public static string ProductCountOfCategoryExceeded = "Maximum number of a category exceeded";
 
         public static string ProductNameAlreadyExist = "Product with this name is already exists.";
+        internal static string CategoryCountExceeded = "Maximum category count exceeded";
     }
 }
