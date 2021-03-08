@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Business.Constants
@@ -15,5 +16,6 @@ namespace Business.Constants
 
         public static string ProductNameAlreadyExist = "Product with this name is already exists.";
         internal static string CategoryCountExceeded = "Maximum category count exceeded";
+        internal static string AuthorizationDenied = "User is not authorized";
     }
 }
