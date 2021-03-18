@@ -1,7 +1,10 @@
-﻿using Business.Abstract;
+using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -28,6 +31,7 @@ namespace Business.Concrete
 
         [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult AddProduct(Product product)
         {
             //instead of below line, we use ValidationAspect
@@ -47,6 +51,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductAdded);
         }
 
+        [CacheAspect(10)]
+        [PerformanceAspect(2)]
         public IDataResult<List<Product>> GetAll(Expression<Func<Product, bool>> filter)
         {
             //fake business logic
@@ -57,6 +63,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(filter), Messages.ProductsListed);
         }
 
+        [CacheAspect]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId),
@@ -89,7 +96,7 @@ namespace Business.Concrete
 
         private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
         {
-            var productsCount = GetProductsByCategoryId(categoryId).Data.Count;
+            int productsCount = GetProductsByCategoryId(categoryId).Data.Count;
             if (productsCount > 10)
             {
                 return new ErrorResult(Messages.ProductCountOfCategoryExceeded);
@@ -99,7 +106,7 @@ namespace Business.Concrete
 
         private IResult CheckIfProductWithSameNameExists(string productName)
         {
-            var isProductExist = _productDal.GetAll(p => p.ProductName == productName).Any();
+            bool isProductExist = _productDal.GetAll(p => p.ProductName == productName).Any();
             if (isProductExist)
             {
                 return new ErrorResult(Messages.ProductNameAlreadyExist);
@@ -109,13 +116,23 @@ namespace Business.Concrete
 
         private IResult CheckIfCategoryCountExceeded()
         {
-            var result = _categoryService.GetAll();
+            IDataResult<List<Category>> result = _categoryService.GetAll();
             if (result.Data.Count > 15)
             {
                 return new ErrorResult(Messages.CategoryCountExceeded);
             }
             return new SuccessResult();
 
+        }
+
+        [TransactionAspect]
+        public IResult AddProductWithTransaction(Product product)
+        {
+            AddProduct(product);
+            //business codes
+            throw new Exception("Exception occured with no reason");
+
+            AddProduct(product);
         }
     }
 }
