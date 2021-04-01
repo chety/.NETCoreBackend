@@ -35,6 +35,14 @@ namespace WebAPI.Controllers
             return NotFound(result);
         }
 
+        [HttpGet("getbycategory")] //-> https://localhost:44332/api/products/getbycategory?categoryId=2
+        public IActionResult GetByCategory(int categoryId)
+        {
+            var result = _productService.GetProductsByCategoryId(categoryId);
+            if (result.Success) return Ok(result);
+            return NotFound(result);
+        }
+
         [HttpPost("add")]
         public IActionResult Add(Product product)
         {
