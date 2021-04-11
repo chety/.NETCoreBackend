@@ -32,8 +32,22 @@ namespace Core.Extensions
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            string message = e.GetType() == typeof(ValidationException) ? e.Message :  "Internal Server Error";
-          
+            string message =  "Internal Server Error";
+
+            if (e.GetType() == typeof(ValidationException))
+            {
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                message = e.Message;
+                return httpContext.Response.WriteAsync(new ValidationErrorDetails
+                {
+                    StatusCode = httpContext.Response.StatusCode,
+                    Message = message,
+                    Errors = ((ValidationException)e).Errors
+                }.ToString());
+            }
+            
+
+
             return httpContext.Response.WriteAsync(new ErrorDetails
             {
                 StatusCode = httpContext.Response.StatusCode,

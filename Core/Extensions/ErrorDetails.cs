@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using FluentValidation.Results;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Core.Extensions
 {
@@ -12,4 +14,11 @@ namespace Core.Extensions
             return JsonConvert.SerializeObject(this);
         }
     }
+
+    public class ValidationErrorDetails : ErrorDetails
+    {
+        public IEnumerable<ValidationFailure> Errors { get; set; }   
+
+    }
+
 }
